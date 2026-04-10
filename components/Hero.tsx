@@ -1,96 +1,103 @@
 "use client";
 
+import Image from "next/image";
 import { motion } from "framer-motion";
 import { siteData } from "@/lib/data";
 
 export default function Hero() {
-  const scrollToWork = () => {
-    document.getElementById("work")?.scrollIntoView({ behavior: "smooth" });
+  const scrollTo = (id: string) => {
+    document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" });
   };
 
   return (
-    <section
-      id="hero"
-      className="relative min-h-screen flex items-center justify-center overflow-hidden bg-[#0a0a0a]"
-    >
-      {/* Background gradient */}
-      <div className="absolute inset-0 bg-gradient-to-b from-[#0a0a0a] via-[#0a0a0a]/80 to-[#0a0a0a] z-10" />
-
-      {/* Decorative lines */}
-      <div className="absolute inset-0 z-0 opacity-10">
-        <div className="absolute top-0 left-1/4 w-px h-full bg-gradient-to-b from-transparent via-[#c8a96e] to-transparent" />
-        <div className="absolute top-0 right-1/4 w-px h-full bg-gradient-to-b from-transparent via-[#c8a96e] to-transparent" />
-      </div>
-
-      {/* Content */}
-      <div className="relative z-20 text-center px-6 max-w-5xl mx-auto">
-        {/* Eyebrow */}
-        <motion.p
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.2 }}
-          className="text-xs tracking-[0.5em] uppercase text-[#c8a96e] mb-8"
-        >
-          Monteur Vidéo — Paris
-        </motion.p>
-
-        {/* Name */}
-        <motion.h1
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1, delay: 0.4 }}
-          className="font-display text-7xl md:text-9xl font-light tracking-tight text-[#f5f5f0] leading-none mb-6"
-        >
-          {siteData.name}
-        </motion.h1>
-
-        {/* Tagline */}
-        <motion.p
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.7 }}
-          className="text-lg md:text-xl text-[#f5f5f0]/50 font-light tracking-wide mb-14 italic"
-        >
-          {siteData.tagline}
-        </motion.p>
-
-        {/* CTA buttons */}
+    <section id="hero" className="relative overflow-hidden pt-32 pb-20 md:pt-40 md:pb-28">
+      <div className="section-shell relative z-10 grid items-center gap-14 lg:grid-cols-[1.05fr_0.95fr]">
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 24 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.9 }}
-          className="flex flex-col sm:flex-row gap-4 justify-center items-center"
+          transition={{ duration: 0.7, ease: "easeOut" }}
+          className="max-w-3xl"
         >
-          <button
-            onClick={scrollToWork}
-            className="group flex items-center gap-3 bg-[#c8a96e] text-[#0a0a0a] px-8 py-4 text-sm tracking-widest uppercase font-medium hover:bg-[#d4b87e] transition-all duration-300"
+          <span className="section-badge">{siteData.heroBadge}</span>
+          <h1 className="font-display text-5xl font-extrabold leading-[0.95] text-balance text-white md:text-7xl lg:text-8xl">
+            {siteData.heroHeadline.line1}
+            <span className="mt-4 block text-accent">{siteData.heroHeadline.highlighted}</span>
+          </h1>
+          <p className="mt-7 max-w-2xl text-lg leading-8 text-muted md:text-xl">
+            {siteData.heroSubheadline}
+          </p>
+
+          <div className="mt-10 flex flex-col items-start gap-4 sm:flex-row">
+            <button
+              onClick={() => scrollTo("pricing")}
+              className="btn-shimmer rounded-full bg-accent px-7 py-4 text-sm font-semibold text-black hover:bg-accent-dim"
+            >
+              Voir les offres
+            </button>
+            <button
+              onClick={() => scrollTo("work")}
+              className="rounded-full border border-white/10 px-7 py-4 text-sm font-semibold text-white hover:border-accent/40 hover:bg-white/4"
+            >
+              Voir les resultats
+            </button>
+          </div>
+        </motion.div>
+
+        <motion.div
+          initial={{ opacity: 0, y: 32 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 0.15, ease: "easeOut" }}
+          className="relative"
+        >
+          <motion.div
+            animate={{ y: [0, -8, 0] }}
+            transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
+            className="panel relative mx-auto max-w-xl overflow-hidden rounded-[28px] p-4"
           >
-            <span>Voir le Showreel</span>
-            <span className="group-hover:translate-x-1 transition-transform">↓</span>
-          </button>
-          <button
-            onClick={() => document.getElementById("contact")?.scrollIntoView({ behavior: "smooth" })}
-            className="text-sm tracking-widest uppercase text-[#f5f5f0]/60 hover:text-[#f5f5f0] border border-white/10 px-8 py-4 hover:border-white/30 transition-all duration-300"
-          >
-            Me contacter
-          </button>
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(34,197,94,0.18),transparent_35%)]" />
+            <div className="relative overflow-hidden rounded-[22px] border border-white/8 bg-black/20">
+              <div className="relative aspect-video">
+                <Image
+                  src="https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=1400&q=80"
+                  alt="Apercu d'une video immobiliere"
+                  fill
+                  priority
+                  sizes="(max-width: 1024px) 100vw, 40vw"
+                  className="object-cover"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/65 via-black/10 to-transparent" />
+                <div className="absolute left-5 right-5 top-5 flex items-center justify-between">
+                  <span className="rounded-full border border-white/12 bg-black/35 px-3 py-1 text-xs font-medium text-white/80">
+                    Reel immobilier
+                  </span>
+                  <span className="rounded-full border border-accent/20 bg-accent/12 px-3 py-1 text-xs font-semibold text-accent">
+                    00:42
+                  </span>
+                </div>
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <div className="flex h-20 w-20 items-center justify-center rounded-full bg-accent text-2xl text-black shadow-[0_0_40px_rgba(34,197,94,0.35)]">
+                    ▶
+                  </div>
+                </div>
+                <div className="absolute inset-x-0 bottom-0 p-6">
+                  <p className="text-sm uppercase tracking-[0.24em] text-white/55">
+                    Visite verticale / Paris
+                  </p>
+                  <p className="mt-2 font-display text-2xl font-bold text-white">
+                    Un montage qui vend l&apos;atmosphere avant la visite.
+                  </p>
+                </div>
+              </div>
+            </div>
+            <button
+              onClick={() => scrollTo("cta")}
+              className="btn-shimmer relative mt-5 w-full rounded-2xl bg-accent px-6 py-4 text-sm font-semibold text-black hover:bg-accent-dim"
+            >
+              Discuter du prochain bien
+            </button>
+          </motion.div>
         </motion.div>
       </div>
-
-      {/* Scroll indicator */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 1.5, duration: 1 }}
-        className="absolute bottom-10 left-1/2 -translate-x-1/2 z-20 flex flex-col items-center gap-2"
-      >
-        <span className="text-xs tracking-[0.4em] uppercase text-[#f5f5f0]/30">Défiler</span>
-        <motion.div
-          animate={{ y: [0, 8, 0] }}
-          transition={{ repeat: Infinity, duration: 1.8, ease: "easeInOut" }}
-          className="w-px h-10 bg-gradient-to-b from-[#c8a96e]/50 to-transparent"
-        />
-      </motion.div>
     </section>
   );
 }

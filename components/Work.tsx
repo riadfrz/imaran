@@ -1,132 +1,74 @@
 "use client";
 
-import { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { useRef } from "react";
 import Image from "next/image";
+import { motion } from "framer-motion";
 import { siteData } from "@/lib/data";
 
-type Project = (typeof siteData.work)[0];
-
-function VideoModal({ project, onClose }: { project: Project; onClose: () => void }) {
-  return (
-    <AnimatePresence>
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
-        onClick={onClose}
-        className="fixed inset-0 z-50 bg-black/90 flex items-center justify-center p-6"
-      >
-        <motion.div
-          initial={{ scale: 0.95, opacity: 0 }}
-          animate={{ scale: 1, opacity: 1 }}
-          exit={{ scale: 0.95, opacity: 0 }}
-          onClick={(e) => e.stopPropagation()}
-          className="relative w-full max-w-4xl aspect-video bg-black"
-        >
-          <iframe
-            src={project.videoUrl + "?autoplay=1"}
-            className="w-full h-full"
-            allow="autoplay; fullscreen"
-            allowFullScreen
-          />
-          <button
-            onClick={onClose}
-            className="absolute -top-10 right-0 text-white/60 hover:text-white text-sm tracking-widest uppercase transition-colors"
-          >
-            ✕ Fermer
-          </button>
-        </motion.div>
-      </motion.div>
-    </AnimatePresence>
-  );
-}
-
-function ProjectCard({ project, index }: { project: Project; index: number }) {
-  const [hovered, setHovered] = useState(false);
-  const [modalOpen, setModalOpen] = useState(false);
-
-  return (
-    <>
-      <motion.div
-        initial={{ opacity: 0, y: 40 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true, margin: "-80px" }}
-        transition={{ duration: 0.7, delay: index * 0.1, ease: "easeOut" }}
-        className="relative aspect-video cursor-pointer overflow-hidden group"
-        onMouseEnter={() => setHovered(true)}
-        onMouseLeave={() => setHovered(false)}
-        onClick={() => setModalOpen(true)}
-      >
-        <Image
-          src={project.thumbnail}
-          alt={project.title}
-          fill
-          className={`object-cover transition-transform duration-700 ${
-            hovered ? "scale-105" : "scale-100"
-          }`}
-          sizes="(max-width: 768px) 100vw, 50vw"
-        />
-
-        {/* Overlay */}
-        <div
-          className={`absolute inset-0 bg-[#0a0a0a] transition-opacity duration-500 ${
-            hovered ? "opacity-60" : "opacity-20"
-          }`}
-        />
-
-        {/* Content */}
-        <div
-          className={`absolute inset-0 flex flex-col justify-end p-6 transition-opacity duration-400 ${
-            hovered ? "opacity-100" : "opacity-0"
-          }`}
-        >
-          <p className="text-xs tracking-[0.4em] uppercase text-[#c8a96e] mb-1">{project.category}</p>
-          <h3 className="font-display text-2xl text-[#f5f5f0] font-light mb-1">{project.title}</h3>
-          <p className="text-sm text-[#f5f5f0]/50">{project.client}</p>
-        </div>
-
-        {/* Play button */}
-        <div
-          className={`absolute inset-0 flex items-center justify-center transition-opacity duration-400 ${
-            hovered ? "opacity-100" : "opacity-0"
-          }`}
-        >
-          <div className="w-14 h-14 rounded-full border border-[#c8a96e]/70 flex items-center justify-center">
-            <span className="text-[#c8a96e] text-lg ml-1">▶</span>
-          </div>
-        </div>
-      </motion.div>
-
-      {modalOpen && <VideoModal project={project} onClose={() => setModalOpen(false)} />}
-    </>
-  );
-}
-
 export default function Work() {
+  const carouselRef = useRef<HTMLDivElement>(null);
+
   return (
-    <section id="work" className="py-28 bg-[#0a0a0a]">
-      <div className="max-w-7xl mx-auto px-6">
-        {/* Section header */}
+    <section id="work" className="py-24 md:py-28">
+      <div className="section-shell">
         <motion.div
-          initial={{ opacity: 0, y: 30 }}
+          initial={{ opacity: 0, y: 24 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.7 }}
-          className="mb-16"
+          transition={{ duration: 0.6 }}
+          className="mb-10 max-w-3xl"
         >
-          <p className="text-xs tracking-[0.5em] uppercase text-[#c8a96e] mb-4">Travaux</p>
-          <h2 className="font-display text-5xl md:text-6xl text-[#f5f5f0] font-light">
-            Sélection de projets
-          </h2>
+          <span className="section-badge">Le resultat</span>
+          <h2 className="section-heading text-white">Le resultat parle d&apos;lui-meme</h2>
+          <p className="section-copy mt-4">
+            Des formats verticaux concus pour stopper le scroll, montrer le bien rapidement et
+            garder une signature visuelle nette.
+          </p>
         </motion.div>
 
-        {/* Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {siteData.work.map((project, i) => (
-            <ProjectCard key={project.id} project={project} index={i} />
-          ))}
-        </div>
+        <motion.div ref={carouselRef} className="overflow-hidden">
+          <motion.div
+            className="carousel-track flex gap-4 pl-1"
+            drag="x"
+            dragConstraints={carouselRef}
+            dragElastic={0.1}
+          >
+            {siteData.work.map((item, index) => (
+              <motion.a
+                key={item.id}
+                href={item.videoUrl}
+                target="_blank"
+                rel="noreferrer"
+                initial={{ opacity: 0, scale: 0.95 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.45, delay: index * 0.08 }}
+                className="panel group relative flex w-[260px] flex-shrink-0 overflow-hidden rounded-[24px]"
+              >
+                <div className="relative aspect-[9/16] w-full">
+                  <Image
+                    src={item.thumbnail}
+                    alt={item.title}
+                    fill
+                    sizes="260px"
+                    className="object-cover transition-transform duration-500 group-hover:scale-105"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/15 to-black/10" />
+                  <div className="absolute left-4 top-4 rounded-full border border-white/10 bg-black/35 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.18em] text-accent">
+                    {item.category}
+                  </div>
+                  <div className="absolute right-4 top-4 flex h-12 w-12 items-center justify-center rounded-full bg-accent text-lg text-black shadow-[0_0_32px_rgba(34,197,94,0.35)]">
+                    ▶
+                  </div>
+                  <div className="absolute inset-x-0 bottom-0 p-5">
+                    <p className="text-xs uppercase tracking-[0.2em] text-white/60">{item.client}</p>
+                    <h3 className="mt-2 font-display text-2xl font-bold text-white">{item.title}</h3>
+                  </div>
+                </div>
+              </motion.a>
+            ))}
+          </motion.div>
+        </motion.div>
       </div>
     </section>
   );

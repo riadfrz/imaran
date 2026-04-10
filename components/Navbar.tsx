@@ -8,59 +8,50 @@ export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 60);
-    window.addEventListener("scroll", onScroll);
+    const onScroll = () => setScrolled(window.scrollY > 40);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
   const scrollTo = (id: string) => {
-    document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
+    document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" });
   };
 
   return (
     <motion.nav
       initial={{ opacity: 0, y: -20 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.6, ease: "easeOut" }}
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
-        scrolled
-          ? "bg-[#0a0a0a]/90 backdrop-blur-md border-b border-white/5"
-          : "bg-transparent"
+      transition={{ duration: 0.5, ease: "easeOut" }}
+      className={`fixed inset-x-0 top-0 z-50 transition-all duration-300 ${
+        scrolled ? "border-b border-white/8 bg-background/70 backdrop-blur-xl" : "bg-transparent"
       }`}
     >
-      <div className="max-w-7xl mx-auto px-6 py-5 flex items-center justify-between">
-        {/* Monogram */}
+      <div className="section-shell flex items-center justify-between py-4">
         <button
           onClick={() => scrollTo("hero")}
-          className="font-display text-xl font-light tracking-[0.3em] text-[#c8a96e] hover:opacity-70 transition-opacity"
+          className="font-display text-xl font-extrabold tracking-tight text-white"
         >
-          IT
+          Imran<span className="text-accent">.</span>
         </button>
 
-        {/* Nav links */}
-        <ul className="hidden md:flex items-center gap-10">
-          {[
-            { label: "Travaux", id: "work" },
-            { label: "À propos", id: "about" },
-            { label: "Services", id: "services" },
-          ].map((item) => (
-            <li key={item.id}>
-              <button
-                onClick={() => scrollTo(item.id)}
-                className="text-sm tracking-widest text-[#f5f5f0]/60 hover:text-[#f5f5f0] transition-colors uppercase"
-              >
-                {item.label}
-              </button>
-            </li>
+        <div className="hidden items-center gap-7 md:flex">
+          {siteData.navLinks.map((link) => (
+            <button
+              key={link.id}
+              onClick={() => scrollTo(link.id)}
+              className="text-sm font-medium text-white/70 hover:text-white"
+            >
+              {link.label}
+            </button>
           ))}
-        </ul>
+        </div>
 
-        {/* CTA */}
         <button
-          onClick={() => scrollTo("contact")}
-          className="text-sm tracking-widest uppercase border border-[#c8a96e]/50 text-[#c8a96e] px-5 py-2 hover:bg-[#c8a96e] hover:text-[#0a0a0a] transition-all duration-300"
+          onClick={() => scrollTo(siteData.navCta.id)}
+          className="btn-shimmer rounded-full bg-accent px-5 py-3 text-sm font-semibold text-black shadow-[0_0_0_1px_rgba(255,255,255,0.05)] hover:bg-accent-dim"
         >
-          Contact
+          {siteData.navCta.label}
         </button>
       </div>
     </motion.nav>
